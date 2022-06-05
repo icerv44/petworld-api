@@ -30,5 +30,5 @@ module.exports = (sequelize, DataTypes) => {
     });
   };
 
-  return Animal;
+  return AnimalPic;
 };

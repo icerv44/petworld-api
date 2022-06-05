@@ -45,16 +45,16 @@ exports.signup = async (req, res, next) => {
       email,
       password,
       confirmPassword,
-      firstName_TH,
-      lastName_TH,
-      firstName_EN,
-      lastName_EN,
+      firstNameTh,
+      lastNameTh,
+      firstNameEn,
+      lastNameEn,
       Gender,
       BirthDate,
       phoneNumber,
       Address,
       District,
-      Provice,
+      Province,
       County,
       ZipCode,
     } = req.body;
@@ -69,16 +69,16 @@ exports.signup = async (req, res, next) => {
     if (!email) {
       createError("Email is required", 400);
     }
-    if (!firstName_TH) {
+    if (!firstNameTh) {
       createError("Fisrt Name Thai is required", 400);
     }
-    if (!lastName_TH) {
+    if (!lastNameTh) {
       createError("Last Name Thai is required", 400);
     }
-    if (!firstName_EN) {
+    if (!firstNameEn) {
       createError("Fisrt Name Eng is required", 400);
     }
-    if (!lastName_EN) {
+    if (!lastNameEn) {
       createError("Last Name Eng is required", 400);
     }
     if (!Gender) {
@@ -97,7 +97,7 @@ exports.signup = async (req, res, next) => {
       createError("District is required", 400);
     }
 
-    if (!Provice) {
+    if (!Province) {
       createError("Provice is required", 400);
     }
 
@@ -115,6 +115,7 @@ exports.signup = async (req, res, next) => {
 
     //Check Strong password format
     const isStrPassword = validator.isStrongPassword(password + "");
+    console.log("isStrPassword  : " + isStrPassword);
     if (!isStrPassword) {
       createError("Please input strong password again", 400);
     }
@@ -139,7 +140,7 @@ exports.signup = async (req, res, next) => {
       createError("Phone Number is invalid format", 400);
     }
 
-    //Check Strong password format
+    //Check hash password format
     const hashedPassword = await bcrypt.hash(password, 12);
     console.log(hashedPassword);
 
@@ -149,22 +150,23 @@ exports.signup = async (req, res, next) => {
       email,
       password: hashedPassword,
     });
-    console.log(user);
+    console.log(`user :   ${user}`);
 
     //create new user Detail
     const userDetail = await UserDetail.create({
-      firstName_TH,
-      lastName_TH,
-      firstName_EN,
-      lastName_EN,
+      firstNameTh,
+      lastNameTh,
+      firstNameEn,
+      lastNameEn,
       Gender,
       BirthDate,
       phoneNumber,
       Address,
       District,
-      Provice,
+      Province,
       County,
       ZipCode,
+      userId: user.id,
     });
     console.log(userDetail);
 
@@ -172,7 +174,7 @@ exports.signup = async (req, res, next) => {
       id: user.id,
     };
     const token = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
-      expiresIn: "7d",
+      expiresIn: process.env.JWT_EXPIRES_IN,
     });
 
     res.status(201).json({ token });

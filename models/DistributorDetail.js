@@ -8,28 +8,28 @@ module.exports = (sequelize, DataTypes) => {
       //   autoIncrement: true,
       //   primaryKey: true,
       // },
-      firstName_TH: {
+      firstNameTh: {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
           notEmpty: true,
         },
       },
-      lastName_TH: {
+      lastNameTh: {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
           notEmpty: true,
         },
       },
-      firstName_EN: {
+      firstNameEn: {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
           notEmpty: true,
         },
       },
-      lastName_EN: {
+      lastNameEn: {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
@@ -60,7 +60,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      Provice: {
+      Province: {
         type: DataTypes.STRING,
         allowNull: false,
       },
@@ -87,5 +87,5 @@ module.exports = (sequelize, DataTypes) => {
     });
   };
 
-  return Distributor;
+  return DistributorDetail;
 };
