@@ -24,6 +24,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       IsComplete: {
         type: DataTypes.BOOLEAN,
+        defaultValue: 0,
         allowNull: false,
       },
       Price: {

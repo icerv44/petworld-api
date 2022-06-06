@@ -5,7 +5,7 @@ const morgan = require("morgan");
 
 const authRouter = require("./routes/authRoute");
 const userRouter = require("./routes/userRoute");
-
+const animalRouter = require("./routes/userRoute");
 const authenticate = require("./middlewares/authenticate");
 
 // const { sequelize } = require("./models");
@@ -26,6 +26,7 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use("/auth", authRouter);
 app.use("/users", authenticate, userRouter);
+app.use("/animals", authenticate, animalRouter);
 
 const port = process.env.PORT || 8000;
 app.listen(port, () => {

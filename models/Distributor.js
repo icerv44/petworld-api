@@ -41,6 +41,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       Rating: {
         type: DataTypes.DECIMAL(10, 2),
+        defaultValue: 0.0,
         allowNull: true,
       },
     },
@@ -50,7 +51,7 @@ module.exports = (sequelize, DataTypes) => {
   Distributor.associate = (models) => {
     Distributor.hasOne(models.DistributorDetail, {
       foreignKey: {
-        name: "DistributorId",
+        name: "distributorId",
         allowNull: false,
       },
       onUpdate: "RESTRICT",
@@ -59,7 +60,7 @@ module.exports = (sequelize, DataTypes) => {
 
     Distributor.hasMany(models.Animal, {
       foreignKey: {
-        name: "DistributorId",
+        name: "distributorId",
         allowNull: false,
       },
       onUpdate: "RESTRICT",
@@ -68,7 +69,7 @@ module.exports = (sequelize, DataTypes) => {
 
     Distributor.hasMany(models.Order, {
       foreignKey: {
-        name: "DistributorId",
+        name: "distributorId",
         allowNull: false,
       },
       onUpdate: "RESTRICT",

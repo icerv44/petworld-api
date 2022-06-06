@@ -1,14 +1,8 @@
-const { User, UserDetail } = require("../models");
+const { Distributor, DistributorDetail } = require("../models");
 
-exports.getMe = async (req, res) => {
-  const user = JSON.parse(JSON.stringify(req.user));
-
-  res.json({ user });
-};
-
-exports.updateUserDetail = async (req, res, next) => {
+exports.updateDistributorDetail = async (req, res, next) => {
   try {
-    const user = JSON.parse(JSON.stringify(req.user));
+    const distributor = JSON.parse(JSON.stringify(req.distributor));
     const {
       firstNameTh,
       lastNameTh,
@@ -39,10 +33,10 @@ exports.updateUserDetail = async (req, res, next) => {
       ZipCode,
     };
 
-    const userDetail = await UserDetail.update(updateValue, {
-      where: { userId: req.user.id },
+    const distributorDetail = await DistributorDetail.update(updateValue, {
+      where: { distributorId: req.distributor.id },
     });
-    console.log("updateUserDetail : " + userDetail);
+    console.log("distributorDetail : " + distributorDetail);
   } catch (err) {
     next(err);
   }
@@ -70,18 +64,17 @@ exports.updatePassword = async (req, res, next) => {
       password: hashedPassword,
     };
 
-    const user = await User.update(updateValue, {
-      where: { Id: req.user.id },
+    const distributor = await Distributor.update(updateValue, {
+      where: { Id: req.distributor.id },
     });
 
     const payload = {
-      id: user.id,
+      id: distributor.id,
     };
     const token = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
       expiresIn: process.env.JWT_EXPIRES_IN,
     });
 
-    console.log("updatePassword  token : " + token);
     res.status(201).json({ token });
   } catch (err) {
     next(err);

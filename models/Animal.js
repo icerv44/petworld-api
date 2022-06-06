@@ -36,9 +36,24 @@ module.exports = (sequelize, DataTypes) => {
       },
       IsActive: {
         type: DataTypes.BOOLEAN,
+        defaultValue: 0,
         allowNull: false,
       },
       ShippingName: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+          notEmpty: true,
+        },
+      },
+      title: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+          notEmpty: true,
+        },
+      },
+      detail: {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {

@@ -79,7 +79,7 @@ module.exports = (sequelize, DataTypes) => {
   DistributorDetail.associate = (models) => {
     DistributorDetail.belongsTo(models.Distributor, {
       foreignKey: {
-        name: "DistributorId",
+        name: "distributorId",
         allowNull: false,
       },
       onUpdate: "RESTRICT",
