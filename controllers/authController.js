@@ -8,9 +8,10 @@ const {
   UserDetail,
   Distributor,
   DistributorDetail,
+  sequelize,
 } = require("../models");
 
-const { Op } = require("sequelize");
+//const { Op } = require("sequelize");
 
 const genToken = (payload) =>
   jwt.sign(payload, process.env.JWT_SECRET_KEY, {
@@ -19,14 +20,14 @@ const genToken = (payload) =>
 
 exports.login = async (req, res, next) => {
   try {
-    const { userName, password } = req.body;
+    const { email, password } = req.body;
     const user = await User.findOne({
       where: {
-        userName: userName,
+        email: email,
       },
     });
 
-    if (!user) {
+    if (!email) {
       createError("invalid credential", 400);
     }
 
@@ -73,21 +74,20 @@ exports.signup = async (req, res, next) => {
   try {
     // const body = req.body;
     const {
-      userName,
       email,
       password,
       confirmPassword,
-      firstNameTh,
-      lastNameTh,
-      firstNameEn,
-      lastNameEn,
+      firstNameTH,
+      lastNameTH,
+      firstNameEN,
+      lastNameEN,
       Gender,
       BirthDate,
       phoneNumber,
       Address,
       District,
       Province,
-      County,
+      Country,
       ZipCode,
     } = req.body;
 
@@ -95,22 +95,22 @@ exports.signup = async (req, res, next) => {
     console.log(req.body);
 
     //Check Input value
-    if (!userName) {
-      createError("User Name is required", 400);
-    }
+    // if (!userName) {
+    //   createError("User Name is required", 400);
+    // }
     if (!email) {
       createError("Email is required", 400);
     }
-    if (!firstNameTh) {
+    if (!firstNameTH) {
       createError("Fisrt Name Thai is required", 400);
     }
-    if (!lastNameTh) {
+    if (!lastNameTH) {
       createError("Last Name Thai is required", 400);
     }
-    if (!firstNameEn) {
+    if (!firstNameEN) {
       createError("Fisrt Name Eng is required", 400);
     }
-    if (!lastNameEn) {
+    if (!lastNameEN) {
       createError("Last Name Eng is required", 400);
     }
     if (!Gender) {
@@ -133,8 +133,8 @@ exports.signup = async (req, res, next) => {
       createError("Provice is required", 400);
     }
 
-    if (!County) {
-      createError("County is required", 400);
+    if (!Country) {
+      createError("Country is required", 400);
     }
 
     if (!ZipCode) {
@@ -174,44 +174,49 @@ exports.signup = async (req, res, next) => {
 
     //Check hash password format
     const hashedPassword = await bcrypt.hash(password, 12);
-    console.log(hashedPassword);
+    //console.log(hashedPassword);
 
-    //create new user
-    const user = await User.create({
-      DistributorName,
-      DistributorNameShow,
-      email,
-      Rating: 0.0,
-      password: hashedPassword,
+    // manage transection
+    const result = await sequelize.transaction(async (t) => {
+      //create new user
+      const user = await User.create(
+        {
+          email,
+          password: hashedPassword,
+        },
+        { transaction: t }
+      );
+      //create new user Detai
+      const userDetail = await UserDetail.create(
+        {
+          firstNameTH,
+          lastNameTH,
+          firstNameEN,
+          lastNameEN,
+          Gender,
+          BirthDate,
+          phoneNumber,
+          Address,
+          District,
+          Province,
+          Country,
+          ZipCode,
+          userId: user.id,
+        },
+        { transaction: t }
+      );
+
+      const payload = {
+        id: user.id,
+      };
+      const token = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
+        expiresIn: process.env.JWT_EXPIRES_IN,
+      });
+
+      res.status(201).json({ token });
+
+      return user;
     });
-    console.log(`user :   ${user}`);
-
-    //create new user Detail
-    const userDetail = await UserDetail.create({
-      firstNameTh,
-      lastNameTh,
-      firstNameEn,
-      lastNameEn,
-      Gender,
-      BirthDate,
-      phoneNumber,
-      Address,
-      District,
-      Province,
-      County,
-      ZipCode,
-      userId: user.id,
-    });
-    console.log(`userDetail :   ${userDetail}`);
-
-    const payload = {
-      id: user.id,
-    };
-    const token = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
-      expiresIn: process.env.JWT_EXPIRES_IN,
-    });
-
-    res.status(201).json({ token });
   } catch (err) {
     next(err);
   }
@@ -222,7 +227,7 @@ exports.signupDistributor = async (req, res, next) => {
     // const body = req.body;
     const {
       DistributorName,
-      DistributorNameShow,
+      // DistributorNameShow,
       email,
       password,
       confirmPassword,
@@ -249,9 +254,9 @@ exports.signupDistributor = async (req, res, next) => {
       createError("DistributorName is required", 400);
     }
 
-    if (!DistributorNameShow) {
-      createError("DistributorNameShow is required", 400);
-    }
+    // if (!DistributorNameShow) {
+    //   createError("DistributorNameShow is required", 400);
+    // }
     if (!email) {
       createError("Email is required", 400);
     }
@@ -332,7 +337,7 @@ exports.signupDistributor = async (req, res, next) => {
 
     //create new Distributor
     const distributor = await Distributor.create({
-      userName,
+      // userName,
       email,
       password: hashedPassword,
     });

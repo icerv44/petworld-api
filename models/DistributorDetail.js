@@ -8,28 +8,28 @@ module.exports = (sequelize, DataTypes) => {
       //   autoIncrement: true,
       //   primaryKey: true,
       // },
-      firstNameTh: {
+      firstNameTH: {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
           notEmpty: true,
         },
       },
-      lastNameTh: {
+      lastNameTH: {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
           notEmpty: true,
         },
       },
-      firstNameEn: {
+      firstNameEN: {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
           notEmpty: true,
         },
       },
-      lastNameEn: {
+      lastNameEN: {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {

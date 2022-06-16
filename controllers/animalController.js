@@ -66,3 +66,17 @@ exports.createAnimal = async (req, res, next) => {
     //next(err)
   }
 };
+
+exports.deleteAnimal = async (req, res, next) => {
+  try {
+    const { animalId } = req.body;
+
+    const animal = await Animal.delete({
+      where: { animalId: req.animal.id },
+    });
+
+    console.log("deleteAnimal : " + animal);
+  } catch (err) {
+    next(err);
+  }
+};

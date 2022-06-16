@@ -8,41 +8,26 @@ module.exports = (sequelize, DataTypes) => {
       //   autoIncrement: true,
       //   primaryKey: true,
       // },
-      firstNameTh: {
+      firstNameTH: {
         type: DataTypes.STRING,
         allowNull: false,
-        validate: {
-          notEmpty: true,
-        },
       },
-      lastNameTh: {
+      lastNameTH: {
         type: DataTypes.STRING,
         allowNull: false,
-        validate: {
-          notEmpty: true,
-        },
       },
-      firstNameEn: {
+      firstNameEN: {
         type: DataTypes.STRING,
         allowNull: false,
-        validate: {
-          notEmpty: true,
-        },
       },
-      lastNameEn: {
+      lastNameEN: {
         type: DataTypes.STRING,
         allowNull: false,
-        validate: {
-          notEmpty: true,
-        },
       },
       Gender: {
         type: DataTypes.ENUM({
           values: ["Male", "Female", "None"],
         }),
-        validate: {
-          notEmpty: true,
-        },
       },
       BirthDate: {
         type: DataTypes.DATEONLY,
@@ -64,7 +49,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      County: {
+      Country: {
         type: DataTypes.STRING,
         allowNull: false,
       },
