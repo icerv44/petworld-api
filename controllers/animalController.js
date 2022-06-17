@@ -69,10 +69,10 @@ exports.createAnimal = async (req, res, next) => {
 
 exports.deleteAnimal = async (req, res, next) => {
   try {
-    const { animalId } = req.body;
+    const { id } = req.params;
 
     const animal = await Animal.delete({
-      where: { animalId: req.animal.id },
+      where: { id },
     });
 
     console.log("deleteAnimal : " + animal);
@@ -83,5 +83,74 @@ exports.deleteAnimal = async (req, res, next) => {
 
 exports.getAllAnimal = async (req, res, next) => {
   try {
-  } catch {}
+    const animal = await Animal.findAll();
+  } catch {
+    next(err);
+  }
+};
+
+exports.getAnimalId = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const animal = await Animal.findAll({
+      where: { id },
+    });
+
+    if (!animal) {
+      createError("animal request not found", 400);
+    }
+  } catch {
+    next(err);
+  }
+};
+
+exports.updateAnimal = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const {
+      category,
+      breed,
+      BirthDate,
+      Price,
+      ShippingPrice,
+      IsActive,
+      ShippingName,
+      title,
+      detail,
+      AnimalPicture,
+    } = req.body;
+
+    if (!title && !req.file) {
+      createError("title or image is required", 400);
+    }
+
+    const animal = await Animal.findOne({ where: { id } });
+    if (!animal) {
+      createError("animal not found", 400);
+    }
+
+    // if (req.file) {
+    //   if (animal.image) {
+    //     const splited = animal.image.split('/');
+    //     const publicId = splited[splited.length - 1].split('.')[0];
+    //     await cloudinary.destroy(publicId);
+    //   }
+    //   const result = await cloudinary.upload(req.file.path);
+    //   animal.image = result.secure_url;
+    // }
+
+    // if (title) {
+    //   animal.title = title;
+    // }
+    // await animal.save();
+
+    // res.json({ animal });
+  } catch (err) {
+    next(err);
+  } finally {
+    if (req.file) {
+      fs.unlinkSync(req.file.path);
+    }
+  }
 };
