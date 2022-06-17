@@ -64,7 +64,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      County: {
+      Country: {
         type: DataTypes.STRING,
         allowNull: false,
       },

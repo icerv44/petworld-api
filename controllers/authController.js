@@ -46,10 +46,10 @@ exports.login = async (req, res, next) => {
 
 exports.loginDistributor = async (req, res, next) => {
   try {
-    const { DistributorName, password } = req.body;
+    const { email, password } = req.body;
     const distributor = await Distributor.findOne({
       where: {
-        DistributorName: DistributorName,
+        email: email,
       },
     });
 
@@ -226,23 +226,21 @@ exports.signupDistributor = async (req, res, next) => {
   try {
     // const body = req.body;
     const {
-      DistributorName,
-      // DistributorNameShow,
       email,
+      DistributorName,
       password,
       confirmPassword,
-      profilePic,
-      firstNameTh,
-      lastNameTh,
-      firstNameEn,
-      lastNameEn,
+      firstNameTH,
+      lastNameTH,
+      firstNameEN,
+      lastNameEN,
       Gender,
       BirthDate,
       phoneNumber,
       Address,
       District,
       Province,
-      County,
+      Country,
       ZipCode,
     } = req.body;
 
@@ -251,25 +249,21 @@ exports.signupDistributor = async (req, res, next) => {
 
     //Check Input value
     if (!DistributorName) {
-      createError("DistributorName is required", 400);
+      createError("User Name is required", 400);
     }
-
-    // if (!DistributorNameShow) {
-    //   createError("DistributorNameShow is required", 400);
-    // }
     if (!email) {
       createError("Email is required", 400);
     }
-    if (!firstNameTh) {
+    if (!firstNameTH) {
       createError("Fisrt Name Thai is required", 400);
     }
-    if (!lastNameTh) {
+    if (!lastNameTH) {
       createError("Last Name Thai is required", 400);
     }
-    if (!firstNameEn) {
+    if (!firstNameEN) {
       createError("Fisrt Name Eng is required", 400);
     }
-    if (!lastNameEn) {
+    if (!lastNameEN) {
       createError("Last Name Eng is required", 400);
     }
     if (!Gender) {
@@ -292,8 +286,8 @@ exports.signupDistributor = async (req, res, next) => {
       createError("Provice is required", 400);
     }
 
-    if (!County) {
-      createError("County is required", 400);
+    if (!Country) {
+      createError("Country is required", 400);
     }
 
     if (!ZipCode) {
@@ -333,42 +327,50 @@ exports.signupDistributor = async (req, res, next) => {
 
     //Check hash password format
     const hashedPassword = await bcrypt.hash(password, 12);
-    console.log(hashedPassword);
+    //console.log(hashedPassword);
 
-    //create new Distributor
-    const distributor = await Distributor.create({
-      // userName,
-      email,
-      password: hashedPassword,
+    // manage transection
+    const result = await sequelize.transaction(async (t) => {
+      //create new user
+      const distributor = await Distributor.create(
+        {
+          email,
+          DistributorName,
+          password: hashedPassword,
+        },
+        { transaction: t }
+      );
+      //create new user Detai
+      const distributorDetail = await DistributorDetail.create(
+        {
+          firstNameTH,
+          lastNameTH,
+          firstNameEN,
+          lastNameEN,
+          Gender,
+          BirthDate,
+          phoneNumber,
+          Address,
+          District,
+          Province,
+          Country,
+          ZipCode,
+          distributorId: distributor.id,
+        },
+        { transaction: t }
+      );
+
+      const payload = {
+        id: distributor.id,
+      };
+      const token = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
+        expiresIn: process.env.JWT_EXPIRES_IN,
+      });
+
+      res.status(201).json({ token });
+
+      return distributor;
     });
-    console.log(`Distributor :   ${distributor}`);
-
-    //create new user Detail
-    const distributorDetail = await DistributorDetail.create({
-      firstNameTh,
-      lastNameTh,
-      firstNameEn,
-      lastNameEn,
-      Gender,
-      BirthDate,
-      phoneNumber,
-      Address,
-      District,
-      Province,
-      County,
-      ZipCode,
-      distributorId: distributor.id,
-    });
-    console.log("distributorDetail : " + distributorDetail);
-
-    const payload = {
-      id: distributor.id,
-    };
-    const token = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
-      expiresIn: process.env.JWT_EXPIRES_IN,
-    });
-
-    res.status(201).json({ token });
   } catch (err) {
     next(err);
   }

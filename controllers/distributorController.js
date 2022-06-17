@@ -1,5 +1,11 @@
 const { Distributor, DistributorDetail } = require("../models");
 
+exports.getMe = async (req, res) => {
+  const distributor = JSON.parse(JSON.stringify(req.distributor));
+
+  res.json({ distributor });
+};
+
 exports.updateDistributorDetail = async (req, res, next) => {
   try {
     const distributor = JSON.parse(JSON.stringify(req.distributor));

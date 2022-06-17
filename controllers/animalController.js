@@ -80,3 +80,8 @@ exports.deleteAnimal = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.getAllAnimal = async (req, res, next) => {
+  try {
+  } catch {}
+};
