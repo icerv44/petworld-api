@@ -2,19 +2,26 @@ const { Animal, AnimalBreed, AnimalPic } = require("../models");
 const createError = require("../utils/createError");
 
 exports.createAnimal = async (req, res, next) => {
+  console.log("createAnimal : ");
   try {
+    // const { id } = req.params;
+    // console.log("id : " + animal);
     const {
       category,
       breed,
       BirthDate,
+      Gender,
       Price,
       ShippingPrice,
       IsActive,
       ShippingName,
       title,
       detail,
-      AnimalPicture,
+      distributorId,
+      // AnimalPicture,
     } = req.body;
+
+    console.log("animal : " + req.body);
 
     //Check Input value
     if (!category) {
@@ -38,29 +45,32 @@ exports.createAnimal = async (req, res, next) => {
     if (!ShippingName) {
       createError("ShippingName is required", 400);
     }
-    if (!AnimalPicture) {
-      createError("AnimalPicture is required", 400);
-    }
+    // if (!AnimalPicture) {
+    //   createError("AnimalPicture is required", 400);
+    // }
 
     const animal = await Animal.create({
       category,
       breed,
       BirthDate,
+      Gender,
       Price,
       ShippingPrice,
       IsActive: 1,
       ShippingName,
       title,
       detail,
-      distributorId: req.distributor.id,
+      distributorId: distributorId,
     });
+    // req.distributor.id,
     console.log("animal : " + animal);
     // Create Animal Picture **Not yet finish
-    const animalPic = await AnimalPic.create({
-      animalId: animal.id,
-      AnimalPicture,
-    });
-    console.log("animalPic : " + animalPic);
+    // const animalPic = await AnimalPic.create({
+    //   animalId: animal.id,
+    //   AnimalPicture,
+    // });
+    // console.log("animalPic : " + animalPic);
+    res.status(201).json({ animal });
   } catch (err) {
     createError(err, 400);
     //next(err)
@@ -84,6 +94,8 @@ exports.deleteAnimal = async (req, res, next) => {
 exports.getAllAnimal = async (req, res, next) => {
   try {
     const animal = await Animal.findAll();
+
+    res.status(201).json({ animal });
   } catch {
     next(err);
   }
@@ -118,11 +130,11 @@ exports.updateAnimal = async (req, res, next) => {
       ShippingName,
       title,
       detail,
-      AnimalPicture,
+      // AnimalPicture,
     } = req.body;
 
     if (!title && !req.file) {
-      createError("title or image is required", 400);
+      createError("title is required", 400);
     }
 
     const animal = await Animal.findOne({ where: { id } });
@@ -140,17 +152,53 @@ exports.updateAnimal = async (req, res, next) => {
     //   animal.image = result.secure_url;
     // }
 
-    // if (title) {
-    //   animal.title = title;
-    // }
-    // await animal.save();
+    if (title) {
+      animal.title = title;
+    }
 
-    // res.json({ animal });
+    if (category) {
+      animal.category = category;
+    }
+
+    if (breed) {
+      animal.breed = breed;
+    }
+
+    if (BirthDate) {
+      animal.BirthDate = BirthDate;
+    }
+
+    if (Price) {
+      animal.Price = Price;
+    }
+
+    if (ShippingPrice) {
+      animal.ShippingPrice = ShippingPrice;
+    }
+
+    if (ShippingName) {
+      animal.ShippingName = ShippingName;
+    }
+    if (IsActive) {
+      animal.IsActive = 1;
+    }
+
+    if (detail) {
+      animal.detail = detail;
+    }
+
+    // if (AnimalPicture) {
+    //   animal.AnimalPicture = AnimalPicture;
+    // }
+
+    await animal.save();
+
+    res.json({ animal });
   } catch (err) {
     next(err);
   } finally {
-    if (req.file) {
-      fs.unlinkSync(req.file.path);
-    }
+    // if (req.file) {
+    //   fs.unlinkSync(req.file.path);
+    // }
   }
 };
