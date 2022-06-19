@@ -37,7 +37,7 @@ exports.login = async (req, res, next) => {
       createError("invalid credential", 400);
     }
 
-    const token = genToken({ id: user.id });
+    const token = genToken({ id: user.id, role: "user" });
     res.json({ token });
   } catch (err) {
     next(err);
@@ -47,23 +47,23 @@ exports.login = async (req, res, next) => {
 exports.loginDistributor = async (req, res, next) => {
   try {
     const { email, password } = req.body;
-    const distributor = await Distributor.findOne({
+    const user = await Distributor.findOne({
       where: {
         email: email,
       },
     });
 
-    if (!distributor) {
+    if (!user) {
       createError("invalid credential", 400);
     }
 
-    const isMatch = await bcrypt.compare(password, distributor.password);
+    const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
       createError("invalid credential", 400);
     }
 
-    const token = genToken({ id: distributor.id });
+    const token = genToken({ id: user.id, role: "admin" });
     res.json({ token });
   } catch (err) {
     next(err);
@@ -208,6 +208,7 @@ exports.signup = async (req, res, next) => {
 
       const payload = {
         id: user.id,
+        role: "user",
       };
       const token = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
         expiresIn: process.env.JWT_EXPIRES_IN,
@@ -362,6 +363,7 @@ exports.signupDistributor = async (req, res, next) => {
 
       const payload = {
         id: distributor.id,
+        role: "admin",
       };
       const token = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
         expiresIn: process.env.JWT_EXPIRES_IN,

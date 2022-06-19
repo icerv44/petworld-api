@@ -73,22 +73,22 @@ module.exports = (sequelize, DataTypes) => {
   );
 
   Animal.associate = (models) => {
-    Animal.hasOne(models.AnimalBreed, {
-      foreignKey: {
-        name: "Category",
-        allowNull: false,
-      },
-      onUpdate: "RESTRICT",
-      onDelete: "RESTRICT",
-    });
-    Animal.hasOne(models.AnimalBreed, {
-      foreignKey: {
-        name: "Breed",
-        allowNull: false,
-      },
-      onUpdate: "RESTRICT",
-      onDelete: "RESTRICT",
-    });
+    // Animal.hasOne(models.AnimalBreed, {
+    //   foreignKey: {
+    //     name: "Category",
+    //     allowNull: false,
+    //   },
+    //   onUpdate: "RESTRICT",
+    //   onDelete: "RESTRICT",
+    // });
+    // Animal.hasOne(models.AnimalBreed, {
+    //   foreignKey: {
+    //     name: "Breed",
+    //     allowNull: false,
+    //   },
+    //   onUpdate: "RESTRICT",
+    //   onDelete: "RESTRICT",
+    // });
 
     Animal.belongsTo(models.Distributor, {
       foreignKey: {

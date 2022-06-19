@@ -27,7 +27,7 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use("/auth", authRouter);
 app.use("/users", authenticate, userRouter);
-app.use("/animals", authenticate, animalRouter);
+app.use("/animals", animalRouter);
 app.use("/distributor", authenticate, distributorRouter);
 
 const port = process.env.PORT || 8000;

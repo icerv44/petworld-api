@@ -17,11 +17,13 @@ exports.createAnimal = async (req, res, next) => {
       ShippingName,
       title,
       detail,
-      distributorId,
+
       // AnimalPicture,
     } = req.body;
 
-    console.log("animal : " + req.body);
+    console.log("animal body: ", req.body);
+
+    // console.log("animal body: ", req.user);
 
     //Check Input value
     if (!category) {
@@ -48,6 +50,7 @@ exports.createAnimal = async (req, res, next) => {
     // if (!AnimalPicture) {
     //   createError("AnimalPicture is required", 400);
     // }
+    console.log("distributorId : ", req.distributor.id);
 
     const animal = await Animal.create({
       category,
@@ -60,10 +63,10 @@ exports.createAnimal = async (req, res, next) => {
       ShippingName,
       title,
       detail,
-      distributorId: distributorId,
+      distributorId: req.distributor.id,
     });
     // req.distributor.id,
-    console.log("animal : " + animal);
+    console.log("animal Create: ", animal);
     // Create Animal Picture **Not yet finish
     // const animalPic = await AnimalPic.create({
     //   animalId: animal.id,
@@ -81,11 +84,12 @@ exports.deleteAnimal = async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    const animal = await Animal.delete({
-      where: { id },
-    });
+    const animal = await Animal.findOne({ where: { id } });
 
     console.log("deleteAnimal : " + animal);
+
+    await animal.destroy();
+    res.status(200).json({ id });
   } catch (err) {
     next(err);
   }
@@ -95,7 +99,7 @@ exports.getAllAnimal = async (req, res, next) => {
   try {
     const animal = await Animal.findAll();
 
-    res.status(201).json({ animal });
+    res.status(200).json({ animal });
   } catch {
     next(err);
   }
@@ -105,13 +109,15 @@ exports.getAnimalId = async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    const animal = await Animal.findAll({
+    const animal = await Animal.findOne({
       where: { id },
     });
+    // console.log("Animal : ", animal);
 
     if (!animal) {
       createError("animal request not found", 400);
     }
+    res.status(200).json({ animal });
   } catch {
     next(err);
   }
@@ -119,7 +125,8 @@ exports.getAnimalId = async (req, res, next) => {
 
 exports.updateAnimal = async (req, res, next) => {
   try {
-    // const { id } = req.params;
+    const { id } = req.params;
+    console.log("id : ", id);
     const {
       category,
       breed,
@@ -132,12 +139,14 @@ exports.updateAnimal = async (req, res, next) => {
       detail,
       // AnimalPicture,
     } = req.body;
+    console.log("Body : ", req.body);
 
     if (!title && !req.file) {
       createError("title is required", 400);
     }
 
     const animal = await Animal.findOne({ where: { id } });
+    console.log("isActive");
     if (!animal) {
       createError("animal not found", 400);
     }
@@ -153,6 +162,7 @@ exports.updateAnimal = async (req, res, next) => {
     // }
 
     if (title) {
+      console.log("Title : ", title);
       animal.title = title;
     }
 
@@ -192,7 +202,7 @@ exports.updateAnimal = async (req, res, next) => {
     // }
 
     await animal.save();
-
+    console.log("Animal : ", animal);
     res.json({ animal });
   } catch (err) {
     next(err);
