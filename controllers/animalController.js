@@ -119,7 +119,7 @@ exports.getAnimalId = async (req, res, next) => {
 
 exports.updateAnimal = async (req, res, next) => {
   try {
-    const { id } = req.params;
+    // const { id } = req.params;
     const {
       category,
       breed,
